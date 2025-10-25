@@ -118,7 +118,8 @@ NSDictionary *capeWithIdentifier(NSString *identifier) {
         error = CGSCopyRegisteredCursorImages(CGSMainConnectionID(), (char*)identifier.UTF8String, &size, &hotSpot, &frameCount, &frameDuration, &representations);
         
         // Fallback to CGSGetRegisteredCursorImages if CGSCopyRegisteredCursorImages fails
-        // This is needed for newer macOS versions where CGSCopyRegisteredCursorImages may not work
+        // On macOS Sonoma (14.x) and later, CGSCopyRegisteredCursorImages may fail for
+        // coregraphics cursors. CGSGetRegisteredCursorImages provides compatible fallback.
         if (error) {
             error = CGSGetRegisteredCursorImages(CGSMainConnectionID(), (char*)identifier.UTF8String, &size, &hotSpot, &frameCount, &frameDuration, &representations);
         }
