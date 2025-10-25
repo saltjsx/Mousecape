@@ -116,6 +116,12 @@ NSDictionary *capeWithIdentifier(NSString *identifier) {
     CGError error = 0;
     if (![identifier hasPrefix:@"com.apple.cursor"]) {
         error = CGSCopyRegisteredCursorImages(CGSMainConnectionID(), (char*)identifier.UTF8String, &size, &hotSpot, &frameCount, &frameDuration, &representations);
+        
+        // Fallback to CGSGetRegisteredCursorImages if CGSCopyRegisteredCursorImages fails
+        // This is needed for newer macOS versions where CGSCopyRegisteredCursorImages may not work
+        if (error) {
+            error = CGSGetRegisteredCursorImages(CGSMainConnectionID(), (char*)identifier.UTF8String, &size, &hotSpot, &frameCount, &frameDuration, &representations);
+        }
     } else {
         error = CoreCursorCopyImages(CGSMainConnectionID(), [[identifier pathExtension] intValue], &representations, &size, &hotSpot, &frameCount, &frameDuration);
     }
